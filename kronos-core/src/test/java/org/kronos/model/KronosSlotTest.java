@@ -65,4 +65,13 @@ public class KronosSlotTest {
         assertEquals(KronosSlotStatus.CONFLICT, updatedSlot.getStatus());
     }
 
+    @ParameterizedTest
+    @MethodSource("validDatePeriod")
+    @DisplayName("Slot creation with score")
+    public void testSlotCreationWithScore(LocalDateTime start, LocalDateTime end, KronosSlotType type) {
+        final KronosSlot slot = KronosSlot.fromPeriod(start, end).withType(type).withScore(1.2d).build();
+        assertEquals(1.2d, slot.getScore());
+    }
+
+
 }

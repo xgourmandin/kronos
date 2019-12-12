@@ -27,5 +27,16 @@ class KronosConflictDetectionStrategyTest {
         List<KronosSlot> slots = new ConflictDetectionDataBuilder().notConflictingSlot().conflictingSlot().notConflictingSlot().conflictingSlot().slots();
         final List<KronosSlot> solved = strategy.solve(slots);
         assertEquals(2,solved.stream().filter(s -> KronosSlotStatus.CONFLICT.equals(s.getStatus())).count());
+        assertEquals(4, solved.size());
+    }
+
+    @Test
+    @DisplayName("Solve a cascading conflicted slots")
+    public void testCascadinfConflictDetection() {
+        KronosConflictDetectionStrategy strategy = new KronosConflictDetectionStrategy();
+        List<KronosSlot> slots = new ConflictDetectionDataBuilder().notConflictingSlot().conflictingSlot().conflictingSlot().conflictingSlot().notConflictingSlot().slots();
+        List<KronosSlot> solved = strategy.solve(slots);
+        assertEquals(5, solved.size());
+        assertEquals(2,solved.stream().filter(s -> KronosSlotStatus.CONFLICT.equals(s.getStatus())).count());
     }
 }

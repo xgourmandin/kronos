@@ -27,15 +27,18 @@ public class KronosConflictDetectionStrategy implements KronosSolverStrategy{
         int j = 1;
         while (j < slots.size()) {
             if (slots.get(i).intersect(slots.get(j))) {
-                solvedSlots.add(slots.get(i).changeStatus(KronosSlotStatus.BOOKED));
                 solvedSlots.add(slots.get(j).changeStatus(KronosSlotStatus.CONFLICT));
                 j++;
             }
             else {
                 solvedSlots.add(slots.get(i).changeStatus(KronosSlotStatus.BOOKED));
-                i = j++;
+                i = j;
                 j++;
             }
+        }
+        if (solvedSlots.size() == slots.size() -1 ) {
+            solvedSlots.add(slots.get(i).changeStatus(KronosSlotStatus.BOOKED));
+            
         }
         return solvedSlots;
     }

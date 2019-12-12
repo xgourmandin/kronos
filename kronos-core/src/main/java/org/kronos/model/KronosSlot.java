@@ -10,7 +10,9 @@ public class KronosSlot {
 
     private final KronosSlotType type;
 
-    private final KronosSlotStatus status;
+    private KronosSlotStatus status;
+
+    private double score;
 
     private KronosSlot(LocalDateTime start, LocalDateTime end, KronosSlotType type) {
         super();
@@ -47,6 +49,10 @@ public class KronosSlot {
         return status;
     }
 
+    public double getScore() {
+        return score;
+    }
+
     public boolean intersect(KronosSlot slot2) {
         return start.isBefore(slot2.end) && end.isAfter(slot2.start);
     }
@@ -60,6 +66,7 @@ public class KronosSlot {
         private final LocalDateTime end;
         private KronosSlotType type;
         private KronosSlotStatus status;
+        private double score;
 
         public KronosSlotBuilder(LocalDateTime start, LocalDateTime end) {
 
@@ -78,11 +85,17 @@ public class KronosSlot {
         }
 
         public KronosSlot build() {
-            if (status == null) {
-                return new KronosSlot(start, end, type);
-            } else {
-                return new KronosSlot(start, end, type, status);
+            KronosSlot slot = new KronosSlot(start, end, type);
+            if (status != null) {
+                slot.status = status;
             }
+            slot.score = score;
+            return slot;
+        }
+
+        public KronosSlotBuilder withScore(double score) {
+            this.score = score;
+            return this;
         }
     }
 }
