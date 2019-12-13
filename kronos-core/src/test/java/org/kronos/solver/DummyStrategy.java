@@ -1,9 +1,10 @@
 package org.kronos.solver;
 
+import org.kronos.context.KronosSolvingContext;
 import org.kronos.model.KronosSlot;
 import org.kronos.model.KronosSlotStatus;
 import org.kronos.model.KronosSlotType;
-import org.kronos.solver.strategy.KronosSolverStrategy;
+import org.kronos.strategy.solving.KronosSolverStrategy;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +18,7 @@ public class DummyStrategy implements KronosSolverStrategy {
     }
 
     @Override
-    public List<KronosSlot> solve(List<KronosSlot> slots) {
+    public List<KronosSlot> solve(KronosSolvingContext solvingContext, List<KronosSlot> slots) {
         KronosSlot slot = KronosSlot.fromPeriod(LocalDateTime.now(), LocalDateTime.now().plusHours(1)).withType(new KronosSlotType() {
             @Override
             public String getName() {

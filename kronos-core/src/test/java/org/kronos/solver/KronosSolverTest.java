@@ -2,8 +2,9 @@ package org.kronos.solver;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.kronos.context.KronosSolvingContext;
 import org.kronos.model.KronosSlot;
-import org.kronos.solver.strategy.KronosConflictDetectionStrategy;
+import org.kronos.strategy.solving.KronosConflictDetectionStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ public class KronosSolverTest {
     @Test
     @DisplayName("Kronos solver creation test")
     public void testSolverCreation(){
-        KronosSolver solver = KronosSolver.create();
+        KronosSolver solver = KronosSolver.create().withContext(new KronosSolvingContext());
         assertEquals(KronosConflictDetectionStrategy.NAME, solver.getSolvingStrategy().getName());
     }
 

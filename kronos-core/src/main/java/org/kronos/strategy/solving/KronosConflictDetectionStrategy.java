@@ -1,5 +1,6 @@
-package org.kronos.solver.strategy;
+package org.kronos.strategy.solving;
 
+import org.kronos.context.KronosSolvingContext;
 import org.kronos.model.KronosSlot;
 import org.kronos.model.KronosSlotStatus;
 
@@ -7,8 +8,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class KronosConflictDetectionStrategy implements KronosSolverStrategy{
+public class KronosConflictDetectionStrategy implements KronosSolverStrategy {
     public static final String NAME = "CONFLICT_DETECTION";
+    private KronosSolvingContext solvingContext;
 
     @Override
     public String getName() {
@@ -16,7 +18,8 @@ public class KronosConflictDetectionStrategy implements KronosSolverStrategy{
     }
 
     @Override
-    public List<KronosSlot> solve(List<KronosSlot> slots) {
+    public List<KronosSlot> solve(KronosSolvingContext solvingContext, List<KronosSlot> slots) {
+        this.solvingContext = solvingContext;
         slots.sort(Comparator.comparing(KronosSlot::getStart));
         return linearConflictDetection(slots);
     }
@@ -26,20 +29,26 @@ public class KronosConflictDetectionStrategy implements KronosSolverStrategy{
         int i = 0;
         int j = 1;
         while (j < slots.size()) {
-            if (slots.get(i).intersect(slots.get(j))) {
+            if (slotsAreInConflict(slots.get(i), slots.get(j))) {
                 solvedSlots.add(slots.get(j).changeStatus(KronosSlotStatus.CONFLICT));
                 j++;
-            }
-            else {
+            } else {
                 solvedSlots.add(slots.get(i).changeStatus(KronosSlotStatus.BOOKED));
                 i = j;
                 j++;
             }
         }
-        if (solvedSlots.size() == slots.size() -1 ) {
+        if (solvedSlots.size() == slots.size() - 1) {
             solvedSlots.add(slots.get(i).changeStatus(KronosSlotStatus.BOOKED));
-            
         }
         return solvedSlots;
+    }
+
+    private boolean slotsAreInConflict(KronosSlot slot1, KronosSlot slot2) {
+        boolean intersect = slot1.intersect(slot2);
+        if (!intersect && solvingContext.getSlotSpacingStrategy().isPresent()) {
+            intersect = solvingContext.getSlotSpacingStrategy().get().isSpacingNotEnought(slot1, slot2);
+        }
+        return intersect;
     }
 }

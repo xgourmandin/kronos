@@ -1,6 +1,5 @@
-package org.kronos.solver.strategy;
+package org.kronos.strategy;
 
-import com.sun.deploy.net.MessageHeader;
 import org.kronos.model.KronosSlot;
 import org.kronos.model.TestSlotType;
 
