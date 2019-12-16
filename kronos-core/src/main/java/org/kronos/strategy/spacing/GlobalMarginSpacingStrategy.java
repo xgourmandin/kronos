@@ -20,7 +20,7 @@ public class GlobalMarginSpacingStrategy implements KronosSlotSpacingStrategy {
     }
 
     @Override
-    public boolean isSpacingNotEnought(KronosSlot slot1, KronosSlot slot2) {
-        return Duration.between(slot1.getEnd(), slot2.getStart()).toMillis() < marginMillis;
+    public boolean isSpacingEnought(KronosSlot slot1, KronosSlot slot2) {
+        return Duration.between(slot1.getEnd(), slot2.getStart()).toMillis() > marginMillis;
     }
 }

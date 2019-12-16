@@ -30,10 +30,27 @@ public class ConflictDetectionDataBuilder {
         return this;
     }
 
+    public ConflictDetectionDataBuilder notConflictingSlot(double score) {
+        final LocalDateTime end = currentDate.plusMinutes(5 + SLOT_DURATION);
+        final KronosSlot slot = KronosSlot.fromPeriod(currentDate.plusMinutes(5), end).withType(new TestSlotType()).withScore(score).build();
+        currentDate = end;
+        slots.add(slot);
+        return this;
+    }
+
     public ConflictDetectionDataBuilder conflictingSlot() {
         final LocalDateTime start = currentDate.minusMinutes(rand.nextInt((SLOT_DURATION - 5) / 2) + 5);
         final LocalDateTime end = start.plusMinutes(SLOT_DURATION);
         KronosSlot slot = KronosSlot.fromPeriod(start, end).withType(new TestSlotType()).build();
+        currentDate = end;
+        slots.add(slot);
+        return this;
+    }
+
+    public ConflictDetectionDataBuilder conflictingSlot(double score) {
+        final LocalDateTime start = currentDate.minusMinutes(rand.nextInt((SLOT_DURATION - 5) / 2) + 5);
+        final LocalDateTime end = start.plusMinutes(SLOT_DURATION);
+        KronosSlot slot = KronosSlot.fromPeriod(start, end).withType(new TestSlotType()).withScore(score).build();
         currentDate = end;
         slots.add(slot);
         return this;

@@ -30,7 +30,12 @@ public class KronosConflictDetectionStrategy implements KronosSolverStrategy {
         int j = 1;
         while (j < slots.size()) {
             if (slotsAreInConflict(slots.get(i), slots.get(j))) {
-                solvedSlots.add(slots.get(j).changeStatus(KronosSlotStatus.CONFLICT));
+                if (slots.get(i).getScore() >= slots.get(j).getScore()) {
+                    solvedSlots.add(slots.get(j).changeStatus(KronosSlotStatus.CONFLICT));
+                }else {
+                    solvedSlots.add(slots.get(i).changeStatus(KronosSlotStatus.CONFLICT));
+                    i = j;
+                }
                 j++;
             } else {
                 solvedSlots.add(slots.get(i).changeStatus(KronosSlotStatus.BOOKED));

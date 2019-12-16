@@ -6,5 +6,9 @@ public interface KronosSlotSpacingStrategy {
 
     String getName();
 
-    boolean isSpacingNotEnought(KronosSlot slot1, KronosSlot slot2);
+    boolean isSpacingEnought(KronosSlot slot1, KronosSlot slot2);
+
+    default boolean isSpacingNotEnought(KronosSlot slot1, KronosSlot slot2) {
+        return !isSpacingEnought(slot1, slot2);
+    }
 }

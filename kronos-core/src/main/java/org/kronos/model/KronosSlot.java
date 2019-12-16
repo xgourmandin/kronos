@@ -1,6 +1,7 @@
 package org.kronos.model;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class KronosSlot {
 
@@ -85,12 +86,17 @@ public class KronosSlot {
         }
 
         public KronosSlot build() {
+            validate();
             KronosSlot slot = new KronosSlot(start, end, type);
-            if (status != null) {
-                slot.status = status;
-            }
+            slot.status = status;
             slot.score = score;
             return slot;
+        }
+
+        private void validate() {
+            Objects.requireNonNull(start, "Start date of a slot cannot be null");
+            Objects.requireNonNull(end, "End date of a slot cannot be null");
+            Objects.requireNonNull(type, "Type of a slot cannot be null");
         }
 
         public KronosSlotBuilder withScore(double score) {

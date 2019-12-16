@@ -11,7 +11,7 @@ public class TestSlotSpacingStrategy implements KronosSlotSpacingStrategy {
     }
 
     @Override
-    public boolean isSpacingNotEnought(KronosSlot slot1, KronosSlot slot2) {
-        return true;
+    public boolean isSpacingEnought(KronosSlot slot1, KronosSlot slot2) {
+        return false;
     }
 }

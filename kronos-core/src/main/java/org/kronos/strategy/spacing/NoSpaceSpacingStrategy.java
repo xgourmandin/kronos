@@ -12,7 +12,7 @@ public class NoSpaceSpacingStrategy implements KronosSlotSpacingStrategy {
     }
 
     @Override
-    public boolean isSpacingNotEnought(KronosSlot slot1, KronosSlot slot2) {
-        return slot1.intersect(slot2);
+    public boolean isSpacingEnought(KronosSlot slot1, KronosSlot slot2) {
+        return !slot1.intersect(slot2);
     }
 }
