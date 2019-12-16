@@ -1,10 +1,9 @@
-package org.kronos.context;
+package org.kronos.strategy.spacing;
 
 import org.kronos.model.KronosSlot;
+import org.kronos.strategy.KronosStrategy;
 
-public interface KronosSlotSpacingStrategy {
-
-    String getName();
+public interface KronosSlotSpacingStrategy extends KronosStrategy {
 
     boolean isSpacingEnought(KronosSlot slot1, KronosSlot slot2);
 

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.kronos.strategy.KronosStrategy;
 
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
@@ -70,6 +71,15 @@ public class KronosSlotTest {
     public void testSlotCreationWithScore(LocalDateTime start, LocalDateTime end, KronosSlotType type) {
         final KronosSlot slot = KronosSlot.fromPeriod(start, end).withType(type).withScore(1.2d).build();
         assertEquals(1.2d, slot.getScore());
+    }
+
+    @ParameterizedTest
+    @MethodSource("validDatePeriod")
+    @DisplayName("Slot cloning")
+    public void testCloneSlot(LocalDateTime start, LocalDateTime end, KronosSlotType type) {
+        final KronosSlot slot = KronosSlot.fromPeriod(start, end).withType(type).withScore(1.2d).build();
+        KronosSlot clone = slot.clone();
+        assertEquals(1.2d, clone.getScore());
     }
 
 

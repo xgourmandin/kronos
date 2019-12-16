@@ -1,6 +1,5 @@
 package org.kronos.strategy.spacing;
 
-import org.kronos.context.KronosSlotSpacingStrategy;
 import org.kronos.model.KronosSlot;
 
 public class NoSpaceSpacingStrategy implements KronosSlotSpacingStrategy {

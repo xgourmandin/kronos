@@ -1,6 +1,7 @@
 package org.kronos.context;
 
 import org.kronos.model.KronosSlot;
+import org.kronos.strategy.spacing.KronosSlotSpacingStrategy;
 
 public class TestSlotSpacingStrategy implements KronosSlotSpacingStrategy {
     public static final String NAME = "TestSlotSpacingStrategy";

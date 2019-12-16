@@ -7,6 +7,7 @@ import org.kronos.model.KronosSlotStatus;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class KronosConflictDetectionStrategy implements KronosSolverStrategy {
     public static final String NAME = "CONFLICT_DETECTION";
@@ -29,24 +30,38 @@ public class KronosConflictDetectionStrategy implements KronosSolverStrategy {
         int i = 0;
         int j = 1;
         while (j < slots.size()) {
-            if (slotsAreInConflict(slots.get(i), slots.get(j))) {
-                if (slots.get(i).getScore() >= slots.get(j).getScore()) {
-                    solvedSlots.add(slots.get(j).changeStatus(KronosSlotStatus.CONFLICT));
-                }else {
-                    solvedSlots.add(slots.get(i).changeStatus(KronosSlotStatus.CONFLICT));
-                    i = j;
-                }
-                j++;
+            Optional<KronosSlotStatus> validationResult = validateSlot(slots.get(i));
+            if (validationResult.isPresent()) {
+                solvedSlots.add(slots.get(i).changeStatus(validationResult.get()));
+                i++;
             } else {
-                solvedSlots.add(slots.get(i).changeStatus(KronosSlotStatus.BOOKED));
-                i = j;
-                j++;
+                if (slotsAreInConflict(slots.get(i), slots.get(j))) {
+                    if (slots.get(i).getScore() >= slots.get(j).getScore()) {
+                        solvedSlots.add(slots.get(j).changeStatus(KronosSlotStatus.CONFLICT));
+                    } else {
+                        solvedSlots.add(slots.get(i).changeStatus(KronosSlotStatus.CONFLICT));
+                        i = j;
+                    }
+                    j++;
+                } else {
+                    solvedSlots.add(slots.get(i).changeStatus(KronosSlotStatus.BOOKED));
+                    i = j;
+                    j++;
+                }
             }
         }
         if (solvedSlots.size() == slots.size() - 1) {
             solvedSlots.add(slots.get(i).changeStatus(KronosSlotStatus.BOOKED));
         }
         return solvedSlots;
+    }
+
+    private Optional<KronosSlotStatus> validateSlot(KronosSlot slot) {
+        if (solvingContext.getSlotValidationStrategy().isPresent()) {
+            return solvingContext.getSlotValidationStrategy().get().validate(slot);
+        } else {
+            return Optional.empty();
+        }
     }
 
     private boolean slotsAreInConflict(KronosSlot slot1, KronosSlot slot2) {

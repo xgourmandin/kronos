@@ -104,4 +104,8 @@ public class KronosSlot {
             return this;
         }
     }
+
+    public KronosSlot clone() {
+        return KronosSlot.fromPeriod(start, end).withType(type).withScore(score).withStatus(status).build();
+    }
 }

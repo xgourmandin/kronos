@@ -11,8 +11,11 @@ public class KronosSolvingContextTest {
     @Test
     @DisplayName("Solving context creation")
     public void testSolvingContextCreation() {
-        KronosSolvingContext context = new KronosSolvingContext().withSlotSpacingStrategy(new TestSlotSpacingStrategy());
+        KronosSolvingContext context = new KronosSolvingContext().withSlotSpacingStrategy(new TestSlotSpacingStrategy())
+                .withSlotValidationStrategy(new TestSlotValidationStrategy());
         assertTrue(context.getSlotSpacingStrategy().isPresent());
         assertEquals(TestSlotSpacingStrategy.NAME, context.getSlotSpacingStrategy().get().getName());
+        assertTrue(context.getSlotValidationStrategy().isPresent());
+        assertEquals(TestSlotValidationStrategy.NAME, context.getSlotValidationStrategy().get().getName());
     }
 }
