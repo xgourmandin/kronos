@@ -6,7 +6,7 @@ import org.kronos.strategy.KronosStrategy;
 
 import java.util.Optional;
 
-public interface StatefulKronosSlotValidationStrategy extends KronosStrategy {
+public interface KronosSlotValidationStrategy extends KronosStrategy {
 
     Optional<KronosSlotStatus> validate(KronosSlot testedSlot);
 }

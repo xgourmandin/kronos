@@ -9,12 +9,14 @@ import org.kronos.model.KronosSlot;
 import org.kronos.model.KronosSlotStatus;
 import org.kronos.strategy.KronosTestSlotDataBuilder;
 import org.kronos.strategy.spacing.NoSpaceSpacingStrategy;
+import org.kronos.strategy.validating.StatefulAuthorizedSlotsValidationStrategy;
 
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -68,6 +70,19 @@ class KronosConflictDetectionStrategyTest {
         List<KronosSlot> solved = strategy.solve(new KronosSolvingContext().withSlotSpacingStrategy(new NoSpaceSpacingStrategy()), slots);
         assertEquals(2,solved.stream().filter(s -> KronosSlotStatus.CONFLICT.equals(s.getStatus())).count());
         assertTrue(slots.stream().filter(s -> KronosSlotStatus.CONFLICT.equals(s.getStatus())).allMatch(s -> s.getScore() == 1));
+    }
+
+    @Test
+    @DisplayName("Solve a planning with validation strategy")
+    public void testSolvingPlanningWithValidation() {
+        KronosConflictDetectionStrategy strategy = new KronosConflictDetectionStrategy();
+        List<KronosSlot> slots = new KronosTestSlotDataBuilder().notConflictingSlot().notConflictingSlot().notConflictingSlot().conflictingSlot().notConflictingSlot().slots();
+        final List<KronosSlot> validatingSlots = slots.stream().map(KronosSlot::clone).collect(Collectors.toList());
+        validatingSlots.remove(2);
+        final List<KronosSlot> solved = strategy.solve(new KronosSolvingContext().withSlotValidationStrategy(new StatefulAuthorizedSlotsValidationStrategy(slots)), slots);
+        assertEquals(1,solved.stream().filter(s -> KronosSlotStatus.INVALID.equals(s.getStatus())).count());
+
+
     }
 
 }

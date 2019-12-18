@@ -1,13 +1,13 @@
 package org.kronos.context;
 
 import org.kronos.strategy.spacing.KronosSlotSpacingStrategy;
-import org.kronos.strategy.validating.StatefulKronosSlotValidationStrategy;
+import org.kronos.strategy.validating.KronosSlotValidationStrategy;
 
 import java.util.Optional;
 
 public class KronosSolvingContext {
     private KronosSlotSpacingStrategy spacingStrategy;
-    private StatefulKronosSlotValidationStrategy validationStrategy;
+    private KronosSlotValidationStrategy validationStrategy;
 
     public KronosSolvingContext withSlotSpacingStrategy(KronosSlotSpacingStrategy spacingStrategy) {
         this.spacingStrategy = spacingStrategy;
@@ -18,11 +18,11 @@ public class KronosSolvingContext {
         return Optional.ofNullable(spacingStrategy);
     }
 
-    public Optional<StatefulKronosSlotValidationStrategy> getSlotValidationStrategy() {
+    public Optional<KronosSlotValidationStrategy> getSlotValidationStrategy() {
         return Optional.ofNullable(validationStrategy);
     }
 
-    public KronosSolvingContext withSlotValidationStrategy(StatefulKronosSlotValidationStrategy validationStrategy) {
+    public KronosSolvingContext withSlotValidationStrategy(KronosSlotValidationStrategy validationStrategy) {
         this.validationStrategy = validationStrategy;
         return this;
     }
