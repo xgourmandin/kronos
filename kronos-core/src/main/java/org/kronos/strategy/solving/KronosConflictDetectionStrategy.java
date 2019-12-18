@@ -25,35 +25,37 @@ public class KronosConflictDetectionStrategy implements KronosSolverStrategy {
         return linearConflictDetection(slots);
     }
 
+    private class DetectionResult {
+        public int nextIndex;
+        public KronosSlot solvedSlot;
+    }
+
     private List<KronosSlot> linearConflictDetection(List<KronosSlot> slots) {
         List<KronosSlot> solvedSlots = new ArrayList<>();
         int i = 0;
         int j = 1;
         while (j < slots.size()) {
-            Optional<KronosSlotStatus> validationResult = validateSlot(slots.get(i));
-            if (validationResult.isPresent()) {
-                solvedSlots.add(slots.get(i).changeStatus(validationResult.get()));
-                i++;
-            } else {
-                if (slotsAreInConflict(slots.get(i), slots.get(j))) {
-                    if (slots.get(i).getScore() >= slots.get(j).getScore()) {
-                        solvedSlots.add(slots.get(j).changeStatus(KronosSlotStatus.CONFLICT));
-                    } else {
-                        solvedSlots.add(slots.get(i).changeStatus(KronosSlotStatus.CONFLICT));
-                        i = j;
-                    }
-                    j++;
-                } else {
-                    solvedSlots.add(slots.get(i).changeStatus(KronosSlotStatus.BOOKED));
-                    i = j;
-                    j++;
-                }
-            }
+            DetectionResult result = solveNextSlot(slots, i, j);
+            i = result.nextIndex;
+            solvedSlots.add(result.solvedSlot);
+            j++;
         }
-        if (solvedSlots.size() == slots.size() - 1) {
-            solvedSlots.add(slots.get(i).changeStatus(KronosSlotStatus.BOOKED));
-        }
+        handleLastSlotCase(slots, solvedSlots);
         return solvedSlots;
+    }
+
+
+
+    private DetectionResult solveNextSlot(List<KronosSlot> slots, int i, int j) {
+        Optional<KronosSlotStatus> validationResult = validateSlot(slots.get(i));
+        if (validationResult.isPresent()) {
+            final DetectionResult result = new DetectionResult();
+            result.solvedSlot = slots.get(i).changeStatus(validationResult.get());
+            result.nextIndex = ++i;
+            return result;
+        } else {
+            return computeNextSlotState(slots.get(i), slots.get(j), j);
+        }
     }
 
     private Optional<KronosSlotStatus> validateSlot(KronosSlot slot) {
@@ -64,11 +66,33 @@ public class KronosConflictDetectionStrategy implements KronosSolverStrategy {
         }
     }
 
+    private DetectionResult computeNextSlotState(KronosSlot slot1, KronosSlot slot2, int slot2Index) {
+        final DetectionResult result = new DetectionResult();
+        if (slotsAreInConflict(slot1, slot2)) {
+            if (slot1.getScore() >= slot2.getScore()) {
+                result.solvedSlot= slot2.changeStatus(KronosSlotStatus.CONFLICT);
+            } else {
+                result.solvedSlot = slot1.changeStatus(KronosSlotStatus.CONFLICT);
+                result.nextIndex = slot2Index;
+            }
+        } else {
+            result.solvedSlot = slot1.changeStatus(KronosSlotStatus.BOOKED);
+            result.nextIndex = slot2Index;
+        }
+        return result;
+    }
+
     private boolean slotsAreInConflict(KronosSlot slot1, KronosSlot slot2) {
         boolean intersect = slot1.intersect(slot2);
         if (!intersect && solvingContext.getSlotSpacingStrategy().isPresent()) {
             intersect = solvingContext.getSlotSpacingStrategy().get().isSpacingNotEnought(slot1, slot2);
         }
         return intersect;
+    }
+
+    private void handleLastSlotCase(List<KronosSlot> slots, List<KronosSlot> solvedSlots) {
+        if (solvedSlots.size() == slots.size() - 1) {
+            solvedSlots.add(slots.get(slots.size()-1).changeStatus(KronosSlotStatus.BOOKED));
+        }
     }
 }
