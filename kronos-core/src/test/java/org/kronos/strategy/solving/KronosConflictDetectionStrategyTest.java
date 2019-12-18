@@ -79,10 +79,8 @@ class KronosConflictDetectionStrategyTest {
         List<KronosSlot> slots = new KronosTestSlotDataBuilder().notConflictingSlot().notConflictingSlot().notConflictingSlot().conflictingSlot().notConflictingSlot().slots();
         final List<KronosSlot> validatingSlots = slots.stream().map(KronosSlot::clone).collect(Collectors.toList());
         validatingSlots.remove(2);
-        final List<KronosSlot> solved = strategy.solve(new KronosSolvingContext().withSlotValidationStrategy(new StatefulAuthorizedSlotsValidationStrategy(slots)), slots);
+        final List<KronosSlot> solved = strategy.solve(new KronosSolvingContext().withSlotValidationStrategy(new StatefulAuthorizedSlotsValidationStrategy(validatingSlots)), slots);
         assertEquals(1,solved.stream().filter(s -> KronosSlotStatus.INVALID.equals(s.getStatus())).count());
-
-
     }
 
 }
