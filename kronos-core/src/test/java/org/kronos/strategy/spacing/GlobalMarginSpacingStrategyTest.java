@@ -23,8 +23,8 @@ public class GlobalMarginSpacingStrategyTest {
     public void testNoOverlappingSlots() {
         GlobalMarginSpacingStrategy strategy = new GlobalMarginSpacingStrategy(1000);
         LocalDateTime end = LocalDateTime.now().plusMinutes(30);
-        KronosSlot slot1 = KronosSlot.fromPeriod(LocalDateTime.now(), end).withType(new TestSlotType()).build();
-        KronosSlot slot2 = KronosSlot.fromPeriod(end.plusSeconds(2), end.plusMinutes(30)).withType(new TestSlotType()).build();
+        KronosSlot slot1 = KronosSlot.builder().withStart(LocalDateTime.now()).withEnd(end).withType(new TestSlotType()).build();
+        KronosSlot slot2 = KronosSlot.builder().withStart(end.plusSeconds(2)).withEnd(end.plusMinutes(30)).withType(new TestSlotType()).build();
         assertFalse(strategy.isSpacingNotEnought(slot1, slot2));
     }
 
@@ -33,8 +33,8 @@ public class GlobalMarginSpacingStrategyTest {
     public void testOverlappingSlots() {
         GlobalMarginSpacingStrategy strategy = new GlobalMarginSpacingStrategy(1000);
         LocalDateTime end = LocalDateTime.now().plusMinutes(30);
-        KronosSlot slot1 = KronosSlot.fromPeriod(LocalDateTime.now(), end).withType(new TestSlotType()).build();
-        KronosSlot slot2 = KronosSlot.fromPeriod(end.plusNanos((long) 5e+8), end.plusMinutes(30)).withType(new TestSlotType()).build();
+        KronosSlot slot1 = KronosSlot.builder().withStart(LocalDateTime.now()).withEnd(end).withType(new TestSlotType()).build();
+        KronosSlot slot2 = KronosSlot.builder().withStart(end.plusNanos((long)5e+8)).withEnd(end.plusMinutes(30)).withType(new TestSlotType()).build();
         assertTrue(strategy.isSpacingNotEnought(slot1, slot2));
     }
 }

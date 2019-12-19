@@ -24,7 +24,7 @@ public class KronosTestSlotDataBuilder {
 
     public KronosTestSlotDataBuilder notConflictingSlot() {
         final LocalDateTime end = currentDate.plusMinutes(5 + SLOT_DURATION);
-        final KronosSlot slot = KronosSlot.fromPeriod(currentDate.plusMinutes(5), end).withType(new TestSlotType()).build();
+        final KronosSlot slot = KronosSlot.builder().withStart(currentDate.plusMinutes(5)).withEnd(end).withType(new TestSlotType()).build();
         currentDate = end;
         slots.add(slot);
         return this;
@@ -32,7 +32,7 @@ public class KronosTestSlotDataBuilder {
 
     public KronosTestSlotDataBuilder notConflictingSlot(double score) {
         final LocalDateTime end = currentDate.plusMinutes(5 + SLOT_DURATION);
-        final KronosSlot slot = KronosSlot.fromPeriod(currentDate.plusMinutes(5), end).withType(new TestSlotType()).withScore(score).build();
+        final KronosSlot slot = KronosSlot.builder().withStart(currentDate.plusMinutes(5)).withEnd(end).withType(new TestSlotType()).withScore(score).build();
         currentDate = end;
         slots.add(slot);
         return this;
@@ -41,7 +41,7 @@ public class KronosTestSlotDataBuilder {
     public KronosTestSlotDataBuilder conflictingSlot() {
         final LocalDateTime start = currentDate.minusMinutes(rand.nextInt((SLOT_DURATION - 5) / 2) + 5);
         final LocalDateTime end = start.plusMinutes(SLOT_DURATION);
-        KronosSlot slot = KronosSlot.fromPeriod(start, end).withType(new TestSlotType()).build();
+        KronosSlot slot = KronosSlot.builder().withStart(start).withEnd(end).withType(new TestSlotType()).build();
         currentDate = end;
         slots.add(slot);
         return this;
@@ -50,7 +50,7 @@ public class KronosTestSlotDataBuilder {
     public KronosTestSlotDataBuilder conflictingSlot(double score) {
         final LocalDateTime start = currentDate.minusMinutes(rand.nextInt((SLOT_DURATION - 5) / 2) + 5);
         final LocalDateTime end = start.plusMinutes(SLOT_DURATION);
-        KronosSlot slot = KronosSlot.fromPeriod(start, end).withType(new TestSlotType()).withScore(score).build();
+        KronosSlot slot = KronosSlot.builder().withStart(start).withEnd(end).withType(new TestSlotType()).withScore(score).build();
         currentDate = end;
         slots.add(slot);
         return this;

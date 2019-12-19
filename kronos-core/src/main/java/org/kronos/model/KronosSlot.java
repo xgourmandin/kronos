@@ -5,34 +5,24 @@ import java.util.Objects;
 
 public class KronosSlot {
 
-    private final LocalDateTime start;
+    private LocalDateTime start;
 
-    private final LocalDateTime end;
+    private LocalDateTime end;
 
-    private final KronosSlotType type;
+    private KronosSlotType type;
 
     private KronosSlotStatus status;
 
     private double score;
 
-    private KronosSlot(LocalDateTime start, LocalDateTime end, KronosSlotType type) {
-        super();
-        this.start = start;
-        this.end = end;
-        this.type = type;
-        this.status = null;
+    public static KronosSlotBuilder builder() {
+        return new KronosSlotBuilder();
     }
 
-    private KronosSlot(LocalDateTime start, LocalDateTime end, KronosSlotType type, KronosSlotStatus status) {
-        this.start = start;
-        this.end = end;
-        this.type = type;
-        this.status = status;
+    public static KronosSlotBuilder builder(KronosSlot slot) {
+        return new KronosSlotBuilder().fromSlot(slot);
     }
 
-    public static KronosSlotBuilder fromPeriod(LocalDateTime start, LocalDateTime end) {
-        return new KronosSlotBuilder(start, end);
-    }
 
     public LocalDateTime getStart() {
         return start;
@@ -59,20 +49,33 @@ public class KronosSlot {
     }
 
     public KronosSlot changeStatus(KronosSlotStatus newStatus) {
-        return new KronosSlot(start, end, type, newStatus);
+        return builder(this).withStatus(newStatus).build();
     }
 
     public static class KronosSlotBuilder {
-        private final LocalDateTime start;
-        private final LocalDateTime end;
+        private LocalDateTime start;
+        private LocalDateTime end;
         private KronosSlotType type;
         private KronosSlotStatus status;
         private double score;
 
-        public KronosSlotBuilder(LocalDateTime start, LocalDateTime end) {
+        public KronosSlotBuilder fromSlot(KronosSlot slot) {
+            start = slot.start;
+            end = slot.end;
+            type = slot.type;
+            status = slot.status;
+            score = slot.score;
+            return this;
+        }
 
+        public KronosSlotBuilder withStart(LocalDateTime start){
             this.start = start;
+            return this;
+        }
+
+        public KronosSlotBuilder withEnd(LocalDateTime end){
             this.end = end;
+            return this;
         }
 
         public KronosSlotBuilder withType(KronosSlotType type) {
@@ -85,9 +88,17 @@ public class KronosSlot {
             return this;
         }
 
+        public KronosSlotBuilder withScore(double score) {
+            this.score = score;
+            return this;
+        }
+
         public KronosSlot build() {
             validate();
-            KronosSlot slot = new KronosSlot(start, end, type);
+            KronosSlot slot = new KronosSlot();
+            slot.start = start;
+            slot.end = end;
+            slot.type = type;
             slot.status = status;
             slot.score = score;
             return slot;
@@ -97,15 +108,10 @@ public class KronosSlot {
             Objects.requireNonNull(start, "Start date of a slot cannot be null");
             Objects.requireNonNull(end, "End date of a slot cannot be null");
             Objects.requireNonNull(type, "Type of a slot cannot be null");
-        }
-
-        public KronosSlotBuilder withScore(double score) {
-            this.score = score;
-            return this;
+            if (end.isBefore(start)) {
+                throw new IllegalArgumentException(String.format("End date of a slot (%s) cannot be before its start date (%s)", end, start));
+            }
         }
     }
 
-    public KronosSlot clone() {
-        return KronosSlot.fromPeriod(start, end).withType(type).withScore(score).withStatus(status).build();
-    }
 }

@@ -1,9 +1,5 @@
 package org.kronos.strategy.solving;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.kronos.context.KronosSolvingContext;
 import org.kronos.model.KronosSlot;
 import org.kronos.strategy.KronosTestSlotDataBuilder;
@@ -11,15 +7,9 @@ import org.kronos.strategy.spacing.NoSpaceSpacingStrategy;
 import org.openjdk.jmh.annotations.*;
 
 import java.security.SecureRandom;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-//@Disabled("Enable only when benchmarking")
 public class BenchmarkKronosConflictDetectionStartegy {
 
     @Benchmark

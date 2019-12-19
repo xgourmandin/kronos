@@ -25,7 +25,7 @@ public class AuthorizedSlotsValidationStrategyTest {
     @DisplayName("Authorized slots validation strategy - Authorized slot")
     public void testSlotIsAuthorized() {
         List<KronosSlot> slots = new KronosTestSlotDataBuilder().notConflictingSlot().slots();
-        KronosSlot testedSlot = slots.get(0).clone();
+        KronosSlot testedSlot = KronosSlot.builder(slots.get(0)).build();
         StatefulAuthorizedSlotsValidationStrategy strategy = new StatefulAuthorizedSlotsValidationStrategy(slots);
         Optional<KronosSlotStatus> result =  strategy.validate(testedSlot);
         assertFalse(result.isPresent());
@@ -35,7 +35,7 @@ public class AuthorizedSlotsValidationStrategyTest {
     @DisplayName("Authorized slots validation strategy - Not authorized slot")
     public void testSlotIsNotAuthorized() {
         List<KronosSlot> slots = new KronosTestSlotDataBuilder().notConflictingSlot().slots();
-        final KronosSlot testedSlot = KronosSlot.fromPeriod(slots.get(0).getStart().plusMinutes(5), slots.get(0).getEnd().plusMinutes(5)).withType(slots.get(0).getType()).build();
+        final KronosSlot testedSlot = KronosSlot.builder().withStart(slots.get(0).getStart().plusMinutes(5)).withEnd(slots.get(0).getEnd().plusMinutes(5)).withType(slots.get(0).getType()).build();
         StatefulAuthorizedSlotsValidationStrategy strategy = new StatefulAuthorizedSlotsValidationStrategy(slots);
         Optional<KronosSlotStatus> result =  strategy.validate(testedSlot);
         assertTrue(result.isPresent());
@@ -45,9 +45,9 @@ public class AuthorizedSlotsValidationStrategyTest {
     @DisplayName("Authorized slots validation strategy - successive slots validation V-NV-V")
     public void testSuccessiveValidationCase1() {
         List<KronosSlot> slots = new KronosTestSlotDataBuilder().notConflictingSlot().notConflictingSlot().notConflictingSlot().slots();
-        final KronosSlot testedSlot1 = slots.get(0).clone();
-        final KronosSlot testedSlot2 = KronosSlot.fromPeriod(slots.get(1).getStart().plusMinutes(5), slots.get(1).getEnd().plusMinutes(5)).withType(slots.get(1).getType()).build();
-        final KronosSlot testedSlot3 = slots.get(2).clone();
+        final KronosSlot testedSlot1 = KronosSlot.builder(slots.get(0)).build();
+        final KronosSlot testedSlot2 = KronosSlot.builder().withStart(slots.get(1).getStart().plusMinutes(5)).withEnd(slots.get(1).getEnd().plusMinutes(5)).withType(slots.get(1).getType()).build();
+        final KronosSlot testedSlot3 = KronosSlot.builder(slots.get(2)).build();
         StatefulAuthorizedSlotsValidationStrategy strategy = new StatefulAuthorizedSlotsValidationStrategy(slots);
         assertFalse(strategy.validate(testedSlot1).isPresent());
         assertTrue(strategy.validate(testedSlot2).isPresent());
@@ -59,8 +59,8 @@ public class AuthorizedSlotsValidationStrategyTest {
     @DisplayName("Authorized slots validation strategy - successive slots validation V-V")
     public void testSuccessiveValidationCase2() {
         List<KronosSlot> slots = new KronosTestSlotDataBuilder().notConflictingSlot().notConflictingSlot().slots();
-        final KronosSlot testedSlot1 = slots.get(0).clone();
-        final KronosSlot testedSlot2 = slots.get(1).clone();
+        final KronosSlot testedSlot1 = KronosSlot.builder(slots.get(0)).build();
+        final KronosSlot testedSlot2 = KronosSlot.builder(slots.get(1)).build();
         StatefulAuthorizedSlotsValidationStrategy strategy = new StatefulAuthorizedSlotsValidationStrategy(slots);
         assertFalse(strategy.validate(testedSlot1).isPresent());
         assertFalse(strategy.validate(testedSlot2).isPresent());
@@ -70,8 +70,8 @@ public class AuthorizedSlotsValidationStrategyTest {
     @DisplayName("Authorized slots validation strategy - successive slots validation V-NV")
     public void testSuccessiveValidationCase3() {
         List<KronosSlot> slots = new KronosTestSlotDataBuilder().notConflictingSlot().notConflictingSlot().slots();
-        final KronosSlot testedSlot1 = slots.get(0).clone();
-        final KronosSlot testedSlot2 = KronosSlot.fromPeriod(slots.get(1).getStart().plusMinutes(5), slots.get(1).getEnd().plusMinutes(5)).withType(slots.get(1).getType()).build();
+        final KronosSlot testedSlot1 = KronosSlot.builder(slots.get(0)).build();
+        final KronosSlot testedSlot2 = KronosSlot.builder().withStart(slots.get(1).getStart().plusMinutes(5)).withEnd(slots.get(1).getEnd().plusMinutes(5)).withType(slots.get(1).getType()).build();
         StatefulAuthorizedSlotsValidationStrategy strategy = new StatefulAuthorizedSlotsValidationStrategy(slots);
         assertFalse(strategy.validate(testedSlot1).isPresent());
         assertTrue(strategy.validate(testedSlot2).isPresent());
@@ -81,8 +81,8 @@ public class AuthorizedSlotsValidationStrategyTest {
     @DisplayName("Authorized slots validation strategy - successive slots validation NV-V")
     public void testSuccessiveValidationCase4() {
         List<KronosSlot> slots = new KronosTestSlotDataBuilder().notConflictingSlot().notConflictingSlot().slots();
-        final KronosSlot testedSlot1 = KronosSlot.fromPeriod(slots.get(0).getStart().plusMinutes(5), slots.get(0).getEnd().plusMinutes(5)).withType(slots.get(0).getType()).build();
-        final KronosSlot testedSlot2 = slots.get(1).clone();
+        final KronosSlot testedSlot1 = KronosSlot.builder().withStart(slots.get(0).getStart().plusMinutes(5)).withEnd(slots.get(0).getEnd().plusMinutes(5)).withType(slots.get(0).getType()).build();
+        final KronosSlot testedSlot2 = KronosSlot.builder(slots.get(1)).build();
         StatefulAuthorizedSlotsValidationStrategy strategy = new StatefulAuthorizedSlotsValidationStrategy(slots);
         assertTrue(strategy.validate(testedSlot1).isPresent());
         assertFalse(strategy.validate(testedSlot2).isPresent());

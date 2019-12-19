@@ -19,7 +19,7 @@ public class DummyStrategy implements KronosSolverStrategy {
 
     @Override
     public List<KronosSlot> solve(KronosSolvingContext solvingContext, List<KronosSlot> slots) {
-        KronosSlot slot = KronosSlot.fromPeriod(LocalDateTime.now(), LocalDateTime.now().plusHours(1)).withType(new KronosSlotType() {
+        KronosSlot slot = KronosSlot.builder().withStart(LocalDateTime.now()).withEnd(LocalDateTime.now().plusHours(1)).withType(new KronosSlotType() {
             @Override
             public String getName() {
                 return "DummySlot";
