@@ -2,8 +2,6 @@ package org.kronos.strategy.solving;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.kronos.context.KronosSolvingContext;
 import org.kronos.model.KronosSlot;
 import org.kronos.model.KronosSlotStatus;
@@ -11,15 +9,11 @@ import org.kronos.strategy.KronosTestSlotDataBuilder;
 import org.kronos.strategy.spacing.NoSpaceSpacingStrategy;
 import org.kronos.strategy.validating.StatefulAuthorizedSlotsValidationStrategy;
 
-import java.security.SecureRandom;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class KronosConflictDetectionStrategyTest {
 

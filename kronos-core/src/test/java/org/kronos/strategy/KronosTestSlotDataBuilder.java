@@ -12,8 +12,8 @@ public class KronosTestSlotDataBuilder {
 
     private static final int SLOT_DURATION = 15;
     private LocalDateTime currentDate;
-    private final SecureRandom rand ;
-    private List<KronosSlot> slots;
+    private final SecureRandom rand;
+    private final List<KronosSlot> slots;
 
     public KronosTestSlotDataBuilder() {
         super();

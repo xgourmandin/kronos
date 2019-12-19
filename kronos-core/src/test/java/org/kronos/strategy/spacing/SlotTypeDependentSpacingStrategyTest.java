@@ -20,7 +20,7 @@ public class SlotTypeDependentSpacingStrategyTest {
     @DisplayName("Slot type dependent spacing strategy - creation")
     public void testSlotTypeDependentSpacingStrategyCreation() {
         SlotTypeDependentSpacingStrategy strategy = new SlotTypeDependentSpacingStrategy(new HashMap<>());
-        assertEquals(strategy.NAME, strategy.getName());
+        assertEquals(SlotTypeDependentSpacingStrategy.NAME, strategy.getName());
     }
 
     @Test

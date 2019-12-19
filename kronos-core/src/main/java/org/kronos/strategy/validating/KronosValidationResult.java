@@ -4,9 +4,9 @@ import org.kronos.model.KronosSlotStatus;
 
 public class KronosValidationResult {
 
-    private boolean success;
+    private final boolean success;
 
-    private KronosSlotStatus status;
+    private final KronosSlotStatus status;
 
     private KronosValidationResult(boolean success, KronosSlotStatus status) {
         this.success = success;

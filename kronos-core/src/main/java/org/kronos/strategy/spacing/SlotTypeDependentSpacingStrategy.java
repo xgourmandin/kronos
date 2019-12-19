@@ -8,7 +8,7 @@ import java.util.Map;
 public class SlotTypeDependentSpacingStrategy implements KronosSlotSpacingStrategy {
 
     public static final String NAME = "SlotTypeDependentSpacingStrategy";
-    private Map<String, Map<String, Double>> margins;
+    private final Map<String, Map<String, Double>> margins;
 
     public SlotTypeDependentSpacingStrategy(Map<String, Map<String, Double>> margins) {
         super();

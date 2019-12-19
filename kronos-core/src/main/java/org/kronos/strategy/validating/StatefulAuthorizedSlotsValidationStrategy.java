@@ -7,7 +7,7 @@ import java.util.List;
 
 public class StatefulAuthorizedSlotsValidationStrategy implements KronosSlotValidationStrategy {
     public static final String NAME = "AuthorizedSlotValidationStrategy";
-    private List<KronosSlot> slots;
+    private final List<KronosSlot> slots;
     private int currentIndex;
 
     public StatefulAuthorizedSlotsValidationStrategy(List<KronosSlot> slots) {

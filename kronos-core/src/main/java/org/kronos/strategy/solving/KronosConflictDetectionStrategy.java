@@ -89,7 +89,7 @@ public class KronosConflictDetectionStrategy implements KronosSolverStrategy {
         }
     }
 
-    private class DetectionResult {
+    private static class DetectionResult {
         public int nextIndex;
         public KronosSlot solvedSlot;
     }

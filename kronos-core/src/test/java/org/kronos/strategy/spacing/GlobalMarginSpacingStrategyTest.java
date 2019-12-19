@@ -15,7 +15,7 @@ public class GlobalMarginSpacingStrategyTest {
     @DisplayName("Global margin spacing strategy - creation")
     public void testGlobalMarginSpacingStrategyCreation() {
         GlobalMarginSpacingStrategy strategy = new GlobalMarginSpacingStrategy(0);
-        assertEquals(strategy.NAME, strategy.getName());
+        assertEquals(GlobalMarginSpacingStrategy.NAME, strategy.getName());
     }
 
     @Test

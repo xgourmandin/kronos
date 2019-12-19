@@ -16,7 +16,7 @@ public class AuthorizedSlotsValidationStrategyTest {
     @DisplayName("Authorized slots validation strategy - creation")
     public void testStrategyCreation() {
         StatefulAuthorizedSlotsValidationStrategy strategy = new StatefulAuthorizedSlotsValidationStrategy(new ArrayList<>());
-        assertEquals(strategy.NAME, strategy.getName());
+        assertEquals(StatefulAuthorizedSlotsValidationStrategy.NAME, strategy.getName());
     }
 
     @Test

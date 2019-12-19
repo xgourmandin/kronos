@@ -6,7 +6,7 @@ import java.time.Duration;
 
 public class GlobalMarginSpacingStrategy implements KronosSlotSpacingStrategy {
     public static final String NAME = "GlobalMarginSpacingStrategy";
-    private int marginMillis;
+    private final int marginMillis;
 
     public GlobalMarginSpacingStrategy(int marginMillis) {
         super();

@@ -10,7 +10,7 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class BenchmarkKronosConflictDetectionStartegy {
+public class BenchmarkKronosConflictDetectionStrategy {
 
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
