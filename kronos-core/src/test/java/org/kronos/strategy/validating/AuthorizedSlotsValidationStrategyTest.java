@@ -3,12 +3,10 @@ package org.kronos.strategy.validating;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.kronos.model.KronosSlot;
-import org.kronos.model.KronosSlotStatus;
 import org.kronos.strategy.KronosTestSlotDataBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,8 +25,8 @@ public class AuthorizedSlotsValidationStrategyTest {
         List<KronosSlot> slots = new KronosTestSlotDataBuilder().notConflictingSlot().slots();
         KronosSlot testedSlot = KronosSlot.builder(slots.get(0)).build();
         StatefulAuthorizedSlotsValidationStrategy strategy = new StatefulAuthorizedSlotsValidationStrategy(slots);
-        Optional<KronosSlotStatus> result =  strategy.validate(testedSlot);
-        assertFalse(result.isPresent());
+        KronosValidationResult result = strategy.validate(testedSlot);
+        assertTrue(result.validationSucceeded());
     }
 
     @Test
@@ -37,8 +35,8 @@ public class AuthorizedSlotsValidationStrategyTest {
         List<KronosSlot> slots = new KronosTestSlotDataBuilder().notConflictingSlot().slots();
         final KronosSlot testedSlot = KronosSlot.builder().withStart(slots.get(0).getStart().plusMinutes(5)).withEnd(slots.get(0).getEnd().plusMinutes(5)).withType(slots.get(0).getType()).build();
         StatefulAuthorizedSlotsValidationStrategy strategy = new StatefulAuthorizedSlotsValidationStrategy(slots);
-        Optional<KronosSlotStatus> result =  strategy.validate(testedSlot);
-        assertTrue(result.isPresent());
+        KronosValidationResult result = strategy.validate(testedSlot);
+        assertFalse(result.validationSucceeded());
     }
 
     @Test
@@ -49,9 +47,9 @@ public class AuthorizedSlotsValidationStrategyTest {
         final KronosSlot testedSlot2 = KronosSlot.builder().withStart(slots.get(1).getStart().plusMinutes(5)).withEnd(slots.get(1).getEnd().plusMinutes(5)).withType(slots.get(1).getType()).build();
         final KronosSlot testedSlot3 = KronosSlot.builder(slots.get(2)).build();
         StatefulAuthorizedSlotsValidationStrategy strategy = new StatefulAuthorizedSlotsValidationStrategy(slots);
-        assertFalse(strategy.validate(testedSlot1).isPresent());
-        assertTrue(strategy.validate(testedSlot2).isPresent());
-        assertFalse(strategy.validate(testedSlot3).isPresent());
+        assertTrue(strategy.validate(testedSlot1).validationSucceeded());
+        assertFalse(strategy.validate(testedSlot2).validationSucceeded());
+        assertTrue(strategy.validate(testedSlot3).validationSucceeded());
     }
 
 
@@ -62,8 +60,8 @@ public class AuthorizedSlotsValidationStrategyTest {
         final KronosSlot testedSlot1 = KronosSlot.builder(slots.get(0)).build();
         final KronosSlot testedSlot2 = KronosSlot.builder(slots.get(1)).build();
         StatefulAuthorizedSlotsValidationStrategy strategy = new StatefulAuthorizedSlotsValidationStrategy(slots);
-        assertFalse(strategy.validate(testedSlot1).isPresent());
-        assertFalse(strategy.validate(testedSlot2).isPresent());
+        assertTrue(strategy.validate(testedSlot1).validationSucceeded());
+        assertTrue(strategy.validate(testedSlot2).validationSucceeded());
     }
 
     @Test
@@ -73,8 +71,8 @@ public class AuthorizedSlotsValidationStrategyTest {
         final KronosSlot testedSlot1 = KronosSlot.builder(slots.get(0)).build();
         final KronosSlot testedSlot2 = KronosSlot.builder().withStart(slots.get(1).getStart().plusMinutes(5)).withEnd(slots.get(1).getEnd().plusMinutes(5)).withType(slots.get(1).getType()).build();
         StatefulAuthorizedSlotsValidationStrategy strategy = new StatefulAuthorizedSlotsValidationStrategy(slots);
-        assertFalse(strategy.validate(testedSlot1).isPresent());
-        assertTrue(strategy.validate(testedSlot2).isPresent());
+        assertTrue(strategy.validate(testedSlot1).validationSucceeded());
+        assertFalse(strategy.validate(testedSlot2).validationSucceeded());
     }
 
     @Test
@@ -84,7 +82,7 @@ public class AuthorizedSlotsValidationStrategyTest {
         final KronosSlot testedSlot1 = KronosSlot.builder().withStart(slots.get(0).getStart().plusMinutes(5)).withEnd(slots.get(0).getEnd().plusMinutes(5)).withType(slots.get(0).getType()).build();
         final KronosSlot testedSlot2 = KronosSlot.builder(slots.get(1)).build();
         StatefulAuthorizedSlotsValidationStrategy strategy = new StatefulAuthorizedSlotsValidationStrategy(slots);
-        assertTrue(strategy.validate(testedSlot1).isPresent());
-        assertFalse(strategy.validate(testedSlot2).isPresent());
+        assertFalse(strategy.validate(testedSlot1).validationSucceeded());
+        assertTrue(strategy.validate(testedSlot2).validationSucceeded());
     }
 }

@@ -4,7 +4,6 @@ import org.kronos.model.KronosSlot;
 import org.kronos.model.KronosSlotStatus;
 
 import java.util.List;
-import java.util.Optional;
 
 public class StatefulAuthorizedSlotsValidationStrategy implements KronosSlotValidationStrategy {
     public static final String NAME = "AuthorizedSlotValidationStrategy";
@@ -23,19 +22,20 @@ public class StatefulAuthorizedSlotsValidationStrategy implements KronosSlotVali
     }
 
     @Override
-    public Optional<KronosSlotStatus> validate(KronosSlot testedSlot) {
-        if (currentIndex == slots.size()) { return Optional.of(KronosSlotStatus.INVALID);}
-        final KronosSlot validatingSlot = slots.get(currentIndex);
-        if((validatingSlot.getStart().isBefore(testedSlot.getStart()) || validatingSlot.getStart().isEqual(testedSlot.getStart()))
-                && (validatingSlot.getEnd().isAfter(testedSlot.getEnd()) || validatingSlot.getEnd().isEqual(testedSlot.getEnd()))) {
-            return Optional.empty();
+    public KronosValidationResult validate(KronosSlot testedSlot) {
+        if (currentIndex == slots.size()) {
+            return KronosValidationResult.failure(KronosSlotStatus.INVALID);
         }
-        else {
+        final KronosSlot validatingSlot = slots.get(currentIndex);
+        if ((validatingSlot.getStart().isBefore(testedSlot.getStart()) || validatingSlot.getStart().isEqual(testedSlot.getStart()))
+                && (validatingSlot.getEnd().isAfter(testedSlot.getEnd()) || validatingSlot.getEnd().isEqual(testedSlot.getEnd()))) {
+            return KronosValidationResult.success();
+        } else {
             if (validatingSlot.getStart().isBefore(testedSlot.getStart())) {
                 currentIndex++;
                 return validate(testedSlot);
-            }else {
-                return Optional.of(KronosSlotStatus.INVALID);
+            } else {
+                return KronosValidationResult.failure(KronosSlotStatus.INVALID);
             }
         }
     }

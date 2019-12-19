@@ -23,7 +23,6 @@ public class KronosSlot {
         return new KronosSlotBuilder().fromSlot(slot);
     }
 
-
     public LocalDateTime getStart() {
         return start;
     }
@@ -68,12 +67,12 @@ public class KronosSlot {
             return this;
         }
 
-        public KronosSlotBuilder withStart(LocalDateTime start){
+        public KronosSlotBuilder withStart(LocalDateTime start) {
             this.start = start;
             return this;
         }
 
-        public KronosSlotBuilder withEnd(LocalDateTime end){
+        public KronosSlotBuilder withEnd(LocalDateTime end) {
             this.end = end;
             return this;
         }
