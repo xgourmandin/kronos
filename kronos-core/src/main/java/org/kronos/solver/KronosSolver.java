@@ -12,17 +12,18 @@ public class KronosSolver {
     private final KronosSolverStrategy strategy;
     private KronosSolvingContext solvingContext;
 
-    private KronosSolver(KronosSolverStrategy strategy) {
+    private KronosSolver(KronosSolverStrategy strategy, KronosSolvingContext context) {
         super();
         this.strategy = strategy;
+        this.solvingContext = context;
     }
 
-    public static KronosSolver create() {
-        return new KronosSolver(new KronosConflictDetectionStrategy());
+    public static KronosSolver create(KronosSolvingContext context) {
+        return new KronosSolver(new KronosConflictDetectionStrategy(), context);
     }
 
-    public static KronosSolver create(KronosSolverStrategy strategy) {
-        return new KronosSolver(strategy);
+    public static KronosSolver create(KronosSolverStrategy strategy, KronosSolvingContext context) {
+        return new KronosSolver(strategy, context);
     }
 
     public KronosSolverStrategy getSolvingStrategy() {
@@ -33,8 +34,4 @@ public class KronosSolver {
         return strategy.solve(solvingContext, slots);
     }
 
-    public KronosSolver withContext(KronosSolvingContext solvingContext) {
-        this.solvingContext = solvingContext;
-        return this;
-    }
 }

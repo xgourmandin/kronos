@@ -14,16 +14,16 @@ public class KronosSolvingContext {
         return this;
     }
 
+    public KronosSolvingContext withSlotValidationStrategy(KronosSlotValidationStrategy validationStrategy) {
+        this.validationStrategy = validationStrategy;
+        return this;
+    }
+
     public Optional<KronosSlotSpacingStrategy> getSlotSpacingStrategy() {
         return Optional.ofNullable(spacingStrategy);
     }
 
     public Optional<KronosSlotValidationStrategy> getSlotValidationStrategy() {
         return Optional.ofNullable(validationStrategy);
-    }
-
-    public KronosSolvingContext withSlotValidationStrategy(KronosSlotValidationStrategy validationStrategy) {
-        this.validationStrategy = validationStrategy;
-        return this;
     }
 }

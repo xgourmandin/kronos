@@ -17,14 +17,14 @@ public class KronosSolverTest {
     @Test
     @DisplayName("Kronos solver creation test")
     public void testSolverCreation(){
-        KronosSolver solver = KronosSolver.create().withContext(new KronosSolvingContext());
+        KronosSolver solver = KronosSolver.create(new KronosSolvingContext());
         assertEquals(KronosConflictDetectionStrategy.NAME, solver.getSolvingStrategy().getName());
     }
 
     @Test
     @DisplayName("Launch a solving strategy")
     public void testLaunchSolving() {
-        KronosSolver solver = KronosSolver.create(new DummyStrategy());
+        KronosSolver solver = KronosSolver.create(new DummyStrategy(), new KronosSolvingContext());
         List<KronosSlot> slots = new ArrayList<>();
         final List<KronosSlot> solvedSlots = solver.solve(slots);
         assertEquals(DummyStrategy.DUMMY_STRATEGY, solver.getSolvingStrategy().getName());
