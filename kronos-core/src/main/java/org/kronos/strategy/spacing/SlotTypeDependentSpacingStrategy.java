@@ -3,14 +3,15 @@ package org.kronos.strategy.spacing;
 import org.kronos.model.KronosSlot;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 
 public class SlotTypeDependentSpacingStrategy implements KronosSlotSpacingStrategy {
 
     public static final String NAME = "SlotTypeDependentSpacingStrategy";
-    private final Map<String, Map<String, Double>> margins;
+    private final Map<String, Map<String, Long>> margins;
 
-    public SlotTypeDependentSpacingStrategy(Map<String, Map<String, Double>> margins) {
+    public SlotTypeDependentSpacingStrategy(Map<String, Map<String, Long>> margins) {
         super();
         this.margins = margins;
     }
@@ -27,5 +28,10 @@ public class SlotTypeDependentSpacingStrategy implements KronosSlotSpacingStrate
         } else {
             throw new IllegalArgumentException("Margin between slot types " + slot1.getType().getName() + " and " + slot2.getType().getName() + " is not configured properly");
         }
+    }
+
+    @Override
+    public long getSlotSpacing(KronosSlot slot1, KronosSlot slot2) {
+        return margins.getOrDefault(slot1.getType().getName(), new HashMap<>()).getOrDefault(slot2.getType().getName(), 0l);
     }
 }

@@ -14,4 +14,9 @@ public class NoSpaceSpacingStrategy implements KronosSlotSpacingStrategy {
     public boolean isSpacingEnought(KronosSlot slot1, KronosSlot slot2) {
         return !slot1.intersect(slot2);
     }
+
+    @Override
+    public long getSlotSpacing(KronosSlot slot1, KronosSlot slot2) {
+        return 0;
+    }
 }
