@@ -3,10 +3,8 @@ package org.kronos.strategy.solving;
 import org.kronos.context.KronosSolvingContext;
 import org.kronos.model.KronosSlot;
 import org.kronos.model.KronosSlotStatus;
-import org.kronos.strategy.validating.KronosValidationResult;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -22,56 +20,43 @@ public class KronosConflictResolutionStrategy implements KronosSolverStrategy {
     }
 
     private List<KronosSlot> linearConflictResolution(List<KronosSlot> slots) {
-        List<KronosSlot> solvedSlots = new ArrayList<>();
-        int i = 0;
-        int j = 1;
-        while (j < slots.size()) {
-            ResolutionResult result = solveNextSlot(slots, i, j);
-            i = result.nextIndex;
-            solvedSlots.add(result.solvedSlot);
-            j++;
-        }
-        handleLastSlotCase(slots, solvedSlots);
-        return solvedSlots;
-    }
-
-    private ResolutionResult solveNextSlot(List<KronosSlot> slots, int i, int j) {
-        KronosValidationResult validationResult = validateSlot(slots.get(i));
-        if (validationResult.validationSucceeded()) {
-            return computeNextSlotState(slots.get(i), slots.get(j), j);
-        } else {
-            final ResolutionResult result = new ResolutionResult();
-            result.solvedSlot = slots.get(i).changeStatus(validationResult.getFailureStatus());
-            result.nextIndex = ++i;
-            return result;
-        }
-    }
-
-    private KronosValidationResult validateSlot(KronosSlot slot) {
-        if (solvingContext.getSlotValidationStrategy().isPresent()) {
-            return solvingContext.getSlotValidationStrategy().get().validate(slot);
-        } else {
-            return KronosValidationResult.success();
-        }
-    }
-
-    private ResolutionResult computeNextSlotState(KronosSlot slot1, KronosSlot slot2, int slot2Index) {
-        final ResolutionResult result = new ResolutionResult();
-        if (slotsAreInConflict(slot1, slot2)) {
-            if (slot1.getScore() >= slot2.getScore()) {
-                LocalDateTime newStartdate = slot1.getEnd().plusNanos(getSlotSpacingInNano(slot1, slot2));
-                result.solvedSlot = KronosSlot.builder(slot2).withStart(newStartdate).withStatus(KronosSlotStatus.BOOKED).build();
+        for (int i = 0; i < slots.size() - 1; i++) {
+            final KronosSlot currentSlot = slots.get(i);
+            final KronosSlot nextSlot = slots.get(i + 1);
+            if (slotsAreInConflict(currentSlot, nextSlot)) {
+                if (currentSlot.getScore() >= nextSlot.getScore()) {
+                    final KronosSlot newNextSlot = computeNewNextSlot(currentSlot, nextSlot);
+                    slots.set(i + 1, newNextSlot);
+                } else {
+                    final KronosSlot newCurrentSlot = computeNewCurrentSlot(currentSlot, nextSlot);
+                    slots.set(i, newCurrentSlot);
+                }
             } else {
-                LocalDateTime newEndDate = slot2.getStart().minusNanos(getSlotSpacingInNano(slot1, slot2));
-                result.solvedSlot = KronosSlot.builder(slot1).withEnd(newEndDate).withStatus(KronosSlotStatus.BOOKED).build();
-                result.nextIndex = slot2Index;
+                final KronosSlot newCurrentSlot = KronosSlot.builder(currentSlot).withStatus(KronosSlotStatus.BOOKED).build();
+                final KronosSlot newNextSlot = KronosSlot.builder(nextSlot).withStatus(KronosSlotStatus.BOOKED).build();
+                slots.set(i, newCurrentSlot);
+                slots.set(i + 1, newNextSlot);
             }
-        } else {
-            result.solvedSlot = slot1.changeStatus(KronosSlotStatus.BOOKED);
-            result.nextIndex = slot2Index;
         }
-        return result;
+        return slots;
     }
+
+    private KronosSlot computeNewNextSlot(KronosSlot currentSlot, KronosSlot nextSlot) {
+        LocalDateTime newStart = currentSlot.getEnd().plusNanos(getSlotSpacingInNano(currentSlot, nextSlot));
+        if (newStart.isAfter(nextSlot.getEnd())) {
+            newStart = nextSlot.getEnd();
+        }
+        return KronosSlot.builder(nextSlot).withStart(newStart).withStatus(KronosSlotStatus.CONFLICT).build();
+    }
+
+    private KronosSlot computeNewCurrentSlot(KronosSlot currentSlot, KronosSlot nextSlot) {
+        LocalDateTime newEnd = nextSlot.getStart().minusNanos(getSlotSpacingInNano(currentSlot, nextSlot));
+        if (newEnd.isBefore(currentSlot.getStart())) {
+            newEnd = currentSlot.getStart();
+        }
+        return KronosSlot.builder(currentSlot).withEnd(newEnd).withStatus(KronosSlotStatus.CONFLICT).build();
+    }
+
 
     private boolean slotsAreInConflict(KronosSlot slot1, KronosSlot slot2) {
         boolean intersect = slot1.intersect(slot2);
@@ -89,19 +74,9 @@ public class KronosConflictResolutionStrategy implements KronosSolverStrategy {
         }
     }
 
-    private void handleLastSlotCase(List<KronosSlot> slots, List<KronosSlot> solvedSlots) {
-        if (solvedSlots.size() == slots.size() - 1) {
-            solvedSlots.add(slots.get(slots.size() - 1).changeStatus(KronosSlotStatus.BOOKED));
-        }
-    }
-
     @Override
     public String getName() {
         return NAME;
     }
 
-    private class ResolutionResult {
-        public int nextIndex;
-        public KronosSlot solvedSlot;
-    }
 }
