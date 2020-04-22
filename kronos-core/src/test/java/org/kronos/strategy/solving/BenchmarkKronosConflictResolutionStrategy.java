@@ -10,13 +10,13 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class BenchmarkKronosConflictDetectionStrategy {
+public class BenchmarkKronosConflictResolutionStrategy {
 
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @Fork(value = 1, warmups = 2)
     public void benchmarkSolverAlgorithmPerformance(ExecutionPlan plan) {
-        KronosConflictDetectionStrategy strategy = new KronosConflictDetectionStrategy();
+        KronosConflictResolutionStrategy strategy = new KronosConflictResolutionStrategy();
         strategy.solve(new KronosSolvingContext().withSlotSpacingStrategy(new NoSpaceSpacingStrategy()), plan.slots);
     }
 

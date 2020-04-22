@@ -40,7 +40,7 @@ public class KronosConflictResolutionStrategyTest {
         final List<KronosSlot> slots = new KronosTestSlotDataBuilder().notConflictingSlot().conflictingSlot().notConflictingSlot().slots();
         final List<KronosSlot> solved = strategy.solve(new KronosSolvingContext(), slots);
         assertEquals(3, solved.size());
-        assertEquals(1, solved.stream().filter(s -> KronosSlotStatus.CONFLICT.equals(s.getStatus())).count());
+        assertEquals(1, solved.stream().filter(s -> KronosSlotStatus.REDUCED.equals(s.getStatus())).count());
     }
 
     @Test
@@ -50,7 +50,7 @@ public class KronosConflictResolutionStrategyTest {
         final List<KronosSlot> slots = new KronosTestSlotDataBuilder().notConflictingSlot(1).conflictingSlot(2).notConflictingSlot(1).slots();
         final List<KronosSlot> solved = strategy.solve(new KronosSolvingContext(), slots);
         assertEquals(3, solved.size());
-        assertEquals(1, solved.stream().filter(s -> KronosSlotStatus.CONFLICT.equals(s.getStatus())).count());
+        assertEquals(1, solved.stream().filter(s -> KronosSlotStatus.REDUCED.equals(s.getStatus())).count());
     }
 
     @Test

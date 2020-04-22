@@ -3,5 +3,6 @@ package org.kronos.model;
 public enum KronosSlotStatus {
     BOOKED,
     CONFLICT,
-    INVALID
+    INVALID,
+    REDUCED
 }

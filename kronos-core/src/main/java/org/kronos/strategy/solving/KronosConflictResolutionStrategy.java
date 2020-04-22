@@ -3,6 +3,7 @@ package org.kronos.strategy.solving;
 import org.kronos.context.KronosSolvingContext;
 import org.kronos.model.KronosSlot;
 import org.kronos.model.KronosSlotStatus;
+import org.kronos.strategy.validating.KronosValidationResult;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -22,23 +23,49 @@ public class KronosConflictResolutionStrategy implements KronosSolverStrategy {
     private List<KronosSlot> linearConflictResolution(List<KronosSlot> slots) {
         for (int i = 0; i < slots.size() - 1; i++) {
             final KronosSlot currentSlot = slots.get(i);
-            final KronosSlot nextSlot = slots.get(i + 1);
-            if (slotsAreInConflict(currentSlot, nextSlot)) {
-                if (currentSlot.getScore() >= nextSlot.getScore()) {
-                    final KronosSlot newNextSlot = computeNewNextSlot(currentSlot, nextSlot);
-                    slots.set(i + 1, newNextSlot);
-                } else {
-                    final KronosSlot newCurrentSlot = computeNewCurrentSlot(currentSlot, nextSlot);
-                    slots.set(i, newCurrentSlot);
+            final KronosValidationResult kronosValidationResult = validateSlot(currentSlot);
+            if (kronosValidationResult.validationSucceeded()) {
+                int j = i + 1;
+                while (j < slots.size()) {
+                    final KronosSlot nextSlot = slots.get(j);
+                    if (slotsAreInConflict(currentSlot, nextSlot)) {
+                        if (currentSlot.getScore() >= nextSlot.getScore()) {
+                            final KronosSlot newNextSlot = computeNewNextSlot(currentSlot, nextSlot);
+                            slots.set(j, newNextSlot);
+                        } else {
+                            final KronosSlot newCurrentSlot = computeNewCurrentSlot(currentSlot, nextSlot);
+                            slots.set(i, newCurrentSlot);
+                            break;
+                        }
+                    } else {
+                        KronosSlotStatus currentSlotStatus;
+                        if (currentSlot.getStatus() == null) {
+                            currentSlotStatus = KronosSlotStatus.BOOKED;
+                        } else {
+                            currentSlotStatus = currentSlot.getStatus();
+                        }
+                        final KronosSlot newCurrentSlot = KronosSlot.builder(currentSlot).withStatus(currentSlotStatus).build();
+                        final KronosSlot newNextSlot = KronosSlot.builder(nextSlot).withStatus(KronosSlotStatus.BOOKED).build();
+                        slots.set(i, newCurrentSlot);
+                        slots.set(j, newNextSlot);
+                        break;
+                    }
+                    j++;
                 }
             } else {
-                final KronosSlot newCurrentSlot = KronosSlot.builder(currentSlot).withStatus(KronosSlotStatus.BOOKED).build();
-                final KronosSlot newNextSlot = KronosSlot.builder(nextSlot).withStatus(KronosSlotStatus.BOOKED).build();
+                final KronosSlot newCurrentSlot = KronosSlot.builder(currentSlot).withStatus(kronosValidationResult.getFailureStatus()).build();
                 slots.set(i, newCurrentSlot);
-                slots.set(i + 1, newNextSlot);
             }
         }
         return slots;
+    }
+
+    private KronosValidationResult validateSlot(KronosSlot slot) {
+        if (solvingContext.getSlotValidationStrategy().isPresent()) {
+            return solvingContext.getSlotValidationStrategy().get().validate(slot);
+        } else {
+            return KronosValidationResult.success();
+        }
     }
 
     private KronosSlot computeNewNextSlot(KronosSlot currentSlot, KronosSlot nextSlot) {
@@ -46,7 +73,7 @@ public class KronosConflictResolutionStrategy implements KronosSolverStrategy {
         if (newStart.isAfter(nextSlot.getEnd())) {
             newStart = nextSlot.getEnd();
         }
-        return KronosSlot.builder(nextSlot).withStart(newStart).withStatus(KronosSlotStatus.CONFLICT).build();
+        return KronosSlot.builder(nextSlot).withStart(newStart).withStatus(KronosSlotStatus.REDUCED).build();
     }
 
     private KronosSlot computeNewCurrentSlot(KronosSlot currentSlot, KronosSlot nextSlot) {
@@ -54,7 +81,7 @@ public class KronosConflictResolutionStrategy implements KronosSolverStrategy {
         if (newEnd.isBefore(currentSlot.getStart())) {
             newEnd = currentSlot.getStart();
         }
-        return KronosSlot.builder(currentSlot).withEnd(newEnd).withStatus(KronosSlotStatus.CONFLICT).build();
+        return KronosSlot.builder(currentSlot).withEnd(newEnd).withStatus(KronosSlotStatus.REDUCED).build();
     }
 
 
